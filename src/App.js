@@ -12,9 +12,15 @@ const App = () => {
   const [selectedValue, setSelectedValue] = useState([50])
   const [selectedFinalValue, setSelectedFinalValue] = useState([50])
   const [knownValues, setKnownValues] = useState([3, 4, 5, 6, 29, 49,50, 51, 52, 53, 60, 82])
-
   const [totalValues, setTotalValues] = useState([])
+  
   const valueMap = useRef(new Map())
+  const emptyValueMap = useRef(new Map())
+  const changeCounter = useRef(0)
+  const oldSelectedValue = useRef(selectedFinalValue[0])
+
+  const determineClosest = (keyArr, goal) => keyArr.reduce((prev, curr) => Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev)
+  
  
   useEffect(() => {
 
@@ -56,9 +62,17 @@ const App = () => {
       valueMap.current.set(val, newMapValue)
     })
 
+      everySteppedValue.forEach((val, index) => {
+        if(val === undefined) {
+          const closest = determineClosest(mapKeys, index)
+          emptyValueMap.current.set(index, {closest})
+        }
+      })
+
     setTotalValues(everySteppedValue)
-    console.log(valueMap)
   }, [knownValues])
+
+  
 
   
  // determine if onChange is occuring to the left or right
@@ -69,7 +83,61 @@ const shouldBeRendered = (localMarkProps) => {
   return valueMap.current.has(+getIndexValue(localMarkProps.key))
 }
 
+const isRight = (selectedValue, oldValue) => {
+  return +selectedValue[0] > +oldValue
+}
+
+const provideNextAvailableValue = (bool) => {
+    if(bool) {
+      return valueMap.current.get(oldSelectedValue.current).firstToRight
+    } else {
+      return valueMap.current.get(oldSelectedValue.current).firstToLeft
+    }
+}
+
+const handleOnChange = (value) => {
+  if(valueMap.current.has(value[0])) {
+    setSelectedValue(value)
+    oldSelectedValue.current = value[0]
+  } else {
+    setSelectedValue(value)
+    oldSelectedValue.current = emptyValueMap.current.get(value[0]).closest
+  }
+
+  changeCounter.current = changeCounter.current + 1
+}
+const handleOnFinalChange = (value) => {
+  if(valueMap.current.has(value[0])) {
+    setSelectedFinalValue(value)
+    oldSelectedValue.current = value[0]
+  } else {
+    // determine if we are heading left or right
+    console.log(oldSelectedValue.current)
+    console.log(value[0])
+    console.log(Math.abs(oldSelectedValue.current - value[0]))
+    if(Math.abs(selectedFinalValue - value[0]) === 1 && changeCounter.current === 1) {
+
+      const basedOnWhatDirectionIAmHeaded = isRight(selectedValue, oldSelectedValue.current)
+      const forceJumpToValue = provideNextAvailableValue(basedOnWhatDirectionIAmHeaded)
+  
+      setSelectedValue([forceJumpToValue])
+      setSelectedFinalValue([forceJumpToValue])
+      setTimeout(() => oldSelectedValue.current = forceJumpToValue, 0)
+    } else {
+      const forceJumpToValue = emptyValueMap.current.get(value[0]).closest
+      setSelectedValue([forceJumpToValue])
+      setSelectedFinalValue([forceJumpToValue])
+      oldSelectedValue.current = forceJumpToValue
+    }
+  }
+  changeCounter.current = 0
+
+  // 
+}
+
+console.log('Num of changes: ', changeCounter.current)
     return (
+      <>
       <div
         style={{
           margin: '0 auto',
@@ -86,8 +154,8 @@ const shouldBeRendered = (localMarkProps) => {
           step={STEP}
           min={MIN}
           max={MAX}
-          onChange={(value) => setSelectedValue(value)}
-          onFinalChange={(value) => setSelectedFinalValue(value)}
+          onChange={handleOnChange}
+          onFinalChange={handleOnFinalChange}
           renderMark={({ props, index }) => (
             <div
               {...props}
@@ -160,20 +228,18 @@ const shouldBeRendered = (localMarkProps) => {
                 boxShadow: '0px 2px 6px #AAA'
               }}
             >
-              {/* <div
-                style={{
-                  height: '16px',
-                  width: '5px',
-                  backgroundColor: isDragged ? '#548BF4' : '#CCC'
-                }}
-              /> */}
             </div>
           )}
         />
-        <output style={{ marginTop: '30px' }}>
+        <p style={{ marginTop: '30px' }}>
           {selectedValue[0].toFixed(1)}
-        </output>
+        </p>
+      
       </div>
+        <p style={{ marginTop: '30px' }}>
+          {selectedFinalValue[0].toFixed(1)}
+        </p>
+        </>
     )
 }
 
