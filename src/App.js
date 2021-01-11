@@ -112,14 +112,9 @@ const handleOnFinalChange = (value) => {
     oldSelectedValue.current = value[0]
   } else {
     // determine if we are heading left or right
-    console.log(oldSelectedValue.current)
-    console.log(value[0])
-    console.log(Math.abs(oldSelectedValue.current - value[0]))
     if(Math.abs(selectedFinalValue - value[0]) === 1 && changeCounter.current === 1) {
-
       const basedOnWhatDirectionIAmHeaded = isRight(selectedValue, oldSelectedValue.current)
       const forceJumpToValue = provideNextAvailableValue(basedOnWhatDirectionIAmHeaded)
-  
       setSelectedValue([forceJumpToValue])
       setSelectedFinalValue([forceJumpToValue])
       setTimeout(() => oldSelectedValue.current = forceJumpToValue, 0)
@@ -131,115 +126,128 @@ const handleOnFinalChange = (value) => {
     }
   }
   changeCounter.current = 0
-
-  // 
 }
 
-console.log('Num of changes: ', changeCounter.current)
-    return (
-      <>
-      <div
-        style={{
-          margin: '0 auto',
-          marginTop: '50px',
-          marginBottom: '50px',
-          display: 'flex',
-          justifyContent: 'center',
-          flexWrap: 'wrap',
-          maxWidth: 'calc(100% - 100px)',
-        }}
-      >
-        <Range
-          values={selectedValue}
-          step={STEP}
-          min={MIN}
-          max={MAX}
-          onChange={handleOnChange}
-          onFinalChange={handleOnFinalChange}
-          renderMark={({ props, index }) => (
+  return (
+    <>
+    <div
+      style={{
+        margin: '0 auto',
+        marginTop: '50px',
+        marginBottom: '50px',
+        display: 'flex',
+        justifyContent: 'center',
+        flexWrap: 'wrap',
+        maxWidth: 'calc(100% - 100px)',
+      }}
+    >
+      <Range
+        values={selectedValue}
+        step={STEP}
+        min={MIN}
+        max={MAX}
+        onChange={handleOnChange}
+        onFinalChange={handleOnFinalChange}
+        renderMark={({ props, index }) => (
+          <div
+            {...props}
+            style={{
+              ...props.style,
+              // height: '8px',
+              // width: '1px',
+              // top: getIndexValue(props.key) === `${selectedValue[0]}` ? '7px' : '17px',
+              backgroundColor:
+                index * STEP < selectedValue[0] ? '#548BF4' : '#ccc'
+            }}
+          >
             <div
-              {...props}
               style={{
-                ...props.style,
-                height: shouldBeRendered(props) ? '20px' : '6px',
-                width: '1px',
-                backgroundColor:
-                  index * STEP < selectedValue[0] ? '#548BF4' : '#ccc'
+                boxShadow: getIndexValue(props.key) === `${selectedValue[0]}` ? 'rgb(63, 81, 181) 0px 0px 0px 1px, grey 0px 0px 14px 1px' : '0px 0px 0px 1px #3f51b5',
+                width: '4px',
+                height: getIndexValue(props.key) === `${selectedValue[0]}` ? '20px' : '4px',
+                backgroundColor: getIndexValue(props.key) === `${selectedValue[0]}` ? '#ff9800' : '#548bf4',
+                top: getIndexValue(props.key) === `${selectedValue[0]}` ? '0px' : '2px',
+                position: 'absolute',
+                borderRadius: getIndexValue(props.key) === `${selectedValue[0]}` ? '2px': '4px',
+                left: '0.5px',
+                transform: 'translate(-50%, 0)',
+                transformOrigin: '50%',
+                display: shouldBeRendered(props) ? 'static' : 'none',
               }}
-            >
-              <div
-                style={{
-                  width: getIndexValue(props.key) === `${selectedValue[0]}` ? '16px' : '8px',
-                  height: getIndexValue(props.key) === `${selectedValue[0]}` ? '16px' : '8px',
-                  backgroundColor: '#ff98008c',
-                  top: getIndexValue(props.key) === `${selectedValue[0]}` ? '65px' : '20px',
-                  position: 'absolute',
-                  borderRadius: '100%',
-                  left: 0,
-                  transform: 'translate(-50%, 0)',
-                  transformOrigin: '50%',
-                  display: shouldBeRendered(props) ? 'static' : 'none',
-                }}
-              ></div>
-              </div>
-          )}
-          renderTrack={({ props, children }) => (
-            <div
-              onMouseDown={props.onMouseDown}
-              onTouchStart={props.onTouchStart}
-              style={{
-                ...props.style,
-                height: '36px',
-                display: 'flex',
-                width: '100%'
-              }}
-            >
-              <div
-                ref={props.ref}
-                style={{
-                  height: '3px',
-                  width: '100%',
-                  borderRadius: '4px',
-                  background: getTrackBackground({
-                    values: selectedValue,
-                    colors: ['#548BF4', '#ccc'],
-                    min: MIN,
-                    max: MAX
-                  }),
-                  alignSelf: 'center'
-                }}
-              >
-                {children}
-              </div>
+            ></div>
             </div>
-          )}
-          renderThumb={({ props, isDragged }) => (
+        )}
+        renderTrack={({ props, children }) => (
+          <div
+            onMouseDown={props.onMouseDown}
+            onTouchStart={props.onTouchStart}
+            style={{
+              ...props.style,
+              height: '36px',
+              display: 'flex',
+              width: '100%'
+            }}
+          >
             <div
-              {...props}
+              ref={props.ref}
               style={{
-                ...props.style,
-                height: '65px',
-                width: '10px',
+                height: '3px',
+                width: '100%',
                 borderRadius: '4px',
-                backgroundColor: '#FFF',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                boxShadow: '0px 2px 6px #AAA'
+                background: getTrackBackground({
+                  values: selectedValue,
+                  colors: ['#548BF4', '#ccc'],
+                  min: MIN,
+                  max: MAX
+                }),
+                alignSelf: 'center'
               }}
             >
+              {children}
             </div>
-          )}
-        />
-        <p style={{ marginTop: '30px' }}>
-          {selectedValue[0].toFixed(1)}
-        </p>
-      
-      </div>
-        <p style={{ marginTop: '30px' }}>
-          {selectedFinalValue[0].toFixed(1)}
-        </p>
-        </>
+          </div>
+        )}
+        renderThumb={({ props, isDragged }) => {
+          console.log(props['aria-valuenow'])
+          return (
+          <div
+            {...props}
+            style={{
+              ...props.style,
+              height: '65px',
+              width: '9px',
+              borderRadius: '4px',
+              backgroundColor: '#FFF',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              boxShadow: '0px 2px 6px #AAA'
+            }}
+          >
+            <div
+              style={{
+                boxShadow: 'rgb(63, 81, 181) 0px 0px 0px 1px, grey 0px 0px 14px 1px',
+                width: '4px',
+                height: '20px',
+                backgroundColor: '#ff9800',
+                borderRadius: '2px',
+                display: valueMap.current.has(props['aria-valuenow'])  ? 'block' : 'none',
+                zIndex: valueMap.current.has(props['aria-valuenow']) ? '1' : 'inherit',
+                pointerEvents: valueMap.current.has(props['aria-valuenow']) ? 'none' : 'inherit'
+              }}
+            ></div>
+          </div>
+        )}}
+      />
+      <p style={{ marginTop: '30px' }}>
+        {selectedValue[0].toFixed(1)}
+      </p>
+    
+    </div>
+      <p style={{ marginTop: '30px' }}>
+        {selectedFinalValue[0].toFixed(1)}
+      </p>
+      </>
     )
 }
 
