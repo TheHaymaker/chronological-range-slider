@@ -11,7 +11,9 @@ const App = () => {
 
   const [selectedValue, setSelectedValue] = useState([50])
   const [selectedFinalValue, setSelectedFinalValue] = useState([50])
+  // eslint-disable-next-line no-unused-vars
   const [knownValues, setKnownValues] = useState([3, 4, 5, 6, 29, 49,50, 51, 52, 53, 60, 82])
+  // eslint-disable-next-line no-unused-vars
   const [totalValues, setTotalValues] = useState([])
   
   const valueMap = useRef(new Map())
