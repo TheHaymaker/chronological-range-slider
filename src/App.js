@@ -163,13 +163,13 @@ const handleOnFinalChange = (value) => {
             <div
               style={{
                 boxShadow: getIndexValue(props.key) === `${selectedValue[0]}` ? 'rgb(63, 81, 181) 0px 0px 0px 1px, grey 0px 0px 14px 1px' : '0px 0px 0px 1px #3f51b5',
-                width: '4px',
-                height: getIndexValue(props.key) === `${selectedValue[0]}` ? '20px' : '4px',
+                width: getIndexValue(props.key) === `${selectedValue[0]}` ? '4px' : '12px',
+                height: getIndexValue(props.key) === `${selectedValue[0]}` ? '20px' : '12px',
                 backgroundColor: getIndexValue(props.key) === `${selectedValue[0]}` ? '#ff9800' : '#548bf4',
-                top: getIndexValue(props.key) === `${selectedValue[0]}` ? '0px' : '2px',
+                top: getIndexValue(props.key) === `${selectedValue[0]}` ? '0px' : '-6px',
                 position: 'absolute',
-                borderRadius: getIndexValue(props.key) === `${selectedValue[0]}` ? '2px': '4px',
-                left: '0.5px',
+                borderRadius: getIndexValue(props.key) === `${selectedValue[0]}` ? '2px': '14px',
+                left: '0',
                 transform: 'translate(-50%, 0)',
                 transformOrigin: '50%',
                 display: shouldBeRendered(props) ? 'static' : 'none',
@@ -191,7 +191,7 @@ const handleOnFinalChange = (value) => {
             <div
               ref={props.ref}
               style={{
-                height: '3px',
+                height: '4px',
                 width: '100%',
                 borderRadius: '4px',
                 background: getTrackBackground({
@@ -215,7 +215,7 @@ const handleOnFinalChange = (value) => {
             style={{
               ...props.style,
               height: '65px',
-              width: '9px',
+              width: '10px',
               borderRadius: '4px',
               backgroundColor: '#FFF',
               display: 'flex',
@@ -235,18 +235,42 @@ const handleOnFinalChange = (value) => {
                 zIndex: valueMap.current.has(props['aria-valuenow']) ? '1' : 'inherit',
                 pointerEvents: valueMap.current.has(props['aria-valuenow']) ? 'none' : 'inherit'
               }}
-            ></div>
+            >
+              <div style={{
+                position: "absolute",
+                top: "-20px",
+                backgroundColor: "white",
+                boxShadow:" 0px 2px 10px -2px #00000096",
+                padding: "5px",
+                borderRadius: "24px",
+                lineHeight: "1rem",
+                left: "50%",
+                transform: "translate(-50%, 0%)",
+                transformOrigin: "50% 0%",
+                fontWeight: "bold"
+              }}>
+                {props['aria-valuenow']}
+              </div>
+              </div>
           </div>
         )}}
       />
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        textAlign: "left"
+
+      }}>
       <p style={{ marginTop: '30px' }}>
-        {selectedValue[0].toFixed(1)}
+        On Change: <strong>{selectedValue[0].toFixed(1)}</strong>
       </p>
     
-    </div>
       <p style={{ marginTop: '30px' }}>
-        {selectedFinalValue[0].toFixed(1)}
+        On FinalChange: <strong>{selectedFinalValue[0].toFixed(1)}</strong>
       </p>
+
+      </div>
+    </div>
       </>
     )
 }
